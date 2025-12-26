@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=VT323&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* font-settings */
+  --jersey-font: 'Jersey 10', sans-serif;
+  --jersey-size: 1.5rem;
+  --jersey-weight: 600;
+
+  /* color definition */
+  --black: #000000;
+  --white: #FFFFFF;
+  --yellow: #FFFF00;
+  --blue: #0000FF;
+  --red: #FF0000;
+  --green: #00FF00;
+  --cyan: #00FFFF;
+}
+
+body {
+  font-family: var(--jersey-font);
+  font-weight: var(--jersey-weight);
+  font-size: var(--jersey-size);
+  line-height: 1;
+  background-color: var(--black);
+  color: var(--white);
+  user-select: none;
+  position: relative;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 1px,
+    rgba(0, 0, 0, 0.1) 2px,
+    transparent 2px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: multiply;
+}
+
+nav {
+  position: fixed;
+  bottom: 0;
+  z-index: 9999;
+}
