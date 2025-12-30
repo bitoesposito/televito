@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { navigationConfig, getNavigationItemByPage, type NavigationItem } from "../lib/navigation.config";
+import { navigationConfig, getNavigationItemByPage } from "../lib/navigation.config";
 
 /**
  * Hook for navigation management

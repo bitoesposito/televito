@@ -3,7 +3,7 @@ import TitleBox from "../utility/TitleBox";
 import TvGuideService from "../../services/tvguide.service";
 
 export default function TvGuideWidget() {
-  const [programsData, setProgramsData] = useState([]);
+  const [programsData, setProgramsData] = useState<any[]>([]);
 
   useEffect(() => {
     TvGuideService.getTvGuide(3)

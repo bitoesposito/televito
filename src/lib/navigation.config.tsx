@@ -7,7 +7,6 @@ import NotiziePage from "../pages/200";
 import GuidaTvPage from "../pages/300";
 import EconomiaPage from "../pages/400";
 import CulturaPage from "../pages/500";
-import ContattiPage from "../pages/900";
 
 export const navigationConfig: NavigationItem[] = [
   {

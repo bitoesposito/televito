@@ -3,11 +3,11 @@ import { useNavigation } from "../../hooks/useNavigation";
 import { forwardRef } from "react";
 
 export interface NavigationProps {
-  onNavigate: (page: number) => void;
+  onNavigate?: (page: number) => void;
 }
 
 const Navigation = forwardRef<HTMLElement, NavigationProps>(
-  ({ onNavigate }, ref) => {
+  ({ onNavigate: _onNavigate }, ref) => {
     const { navigationItems } = useNavigation();
 
     return (
