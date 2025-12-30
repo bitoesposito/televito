@@ -11,10 +11,10 @@ export default function WeatherWidget() {
   }, []);
 
   return (
-    <div className="p-2 border-1 border-gray-500">
+    <div className="p-2 border-1 border-gray-500 h-min">
       <TitleBox color="green" title="Meteo cerignola" size="md" className="mb-2"/>
       {weather && 
-      <div className="flex gap-2 justify-between">
+      <div className="flex gap-3 justify-between">
         <p className="uppercase">
           {WeatherService.getWeatherDescription(
             weather?.current_weather.weathercode ?? 0
@@ -24,7 +24,7 @@ export default function WeatherWidget() {
           {weather?.current_weather.temperature}°C
         </p>
       </div>}
-      {weather === null && <p style={{ color: "var(--cyan)" }}>RICERCA SEGNALE IN CORSO...</p>}
+      {weather === null && <p style={{ color: "var(--yellow)" }}>RICERCA SEGNALE IN CORSO...</p>}
     </div>
   );
 }

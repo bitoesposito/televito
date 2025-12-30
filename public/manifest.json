@@ -1,0 +1,21 @@
+{
+  "name": "Vito Esposito - UX Engineer",
+  "short_name": "Vito Esposito - UX Engineer",
+  "description": "Benvenuto al Televito, un esperienza digitale che replica l'esperienza del Televideo RAI con notizie, meteo, guida TV e informazioni in tempo reale.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "lang": "it",
+  "dir": "ltr"
+}
+

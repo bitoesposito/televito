@@ -1,10 +1,9 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, forwardRef } from "react";
 import type { HeaderProps } from "../../types/televideo";
 
-const Header = function Header(
-  { pageNumber, inputBuffer = "", onInputChange, onConfirm }: HeaderProps,
-) {
-  const inputRef = useRef<HTMLInputElement>(null);
+const Header = forwardRef<HTMLElement, HeaderProps>(
+  function Header({ pageNumber, inputBuffer = "", onInputChange, onConfirm }, ref) {
+    const inputRef = useRef<HTMLInputElement>(null);
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -35,7 +34,7 @@ const Header = function Header(
   const { hours, minutes, seconds } = formatTime(time);
 
   return (
-    <header className="w-full flex justify-between gap-3 p-4">
+    <header ref={ref} className="w-full flex justify-between gap-3 p-4">
       <div className="relative" onClick={() => inputRef.current?.focus()}>
         P{inputBuffer || pageNumber}
         <input
@@ -78,6 +77,9 @@ const Header = function Header(
       </div>
     </header>
   );
-};
+  }
+);
+
+Header.displayName = "Header";
 
 export default Header;

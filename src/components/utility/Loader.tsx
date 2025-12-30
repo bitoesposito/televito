@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 
-export default function Loader({ time, blocks }: { time: number, blocks: number }) {
+export default function Loader({ time, blocks, targetPage = 100 }: { time: number, blocks: number, targetPage?: number }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Dispatch event after 10 seconds to navigate to page 100
-    const duration = time * 1000; // 10 seconds
-    const interval = 500; // Update every 1 second (1 block per second)
-    const steps = duration / interval; // 10 steps
-    const increment = 100 / steps; // 10% per step
+    const duration = time * 500;
+    const interval = 250;
+    const steps = duration / interval;
+    const increment = 100 / steps;
 
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         const next = prev + increment;
         if (next >= 100) {
           clearInterval(progressInterval);
-          // Dispatch custom event to trigger navigation
+          // Dispatch custom event to trigger navigation to target page
           window.dispatchEvent(
-            new CustomEvent("navigateToPage", { detail: 100 })
+            new CustomEvent("navigateToPage", { detail: targetPage })
           );
           return 100;
         }
@@ -26,13 +25,13 @@ export default function Loader({ time, blocks }: { time: number, blocks: number 
     }, interval);
 
     return () => clearInterval(progressInterval);
-  }, []);
+  }, [targetPage]);
 
   const totalBlocks = blocks;
   const filledBlocks = Math.floor((progress / 100) * totalBlocks);
 
   return (
-    <>
+    <div className="flex flex-col gap-3 mt-2">
       <div className="flex justify-between items-center">
         <span className="uppercase" style={{ color: "var(--cyan)" }}>
           risintonizzazione in corso...
@@ -55,6 +54,6 @@ export default function Loader({ time, blocks }: { time: number, blocks: number 
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }

@@ -1,20 +1,26 @@
 import type { WeatherResponse } from "../types/televideo";
+import CacheService from "./cache.service";
 
 export default class WeatherService {
     private static readonly API_URL = "https://api.open-meteo.com/v1/forecast";
-    private static readonly LATITUDE = 45.464211;
-    private static readonly LONGITUDE = 9.189512;
+    // Coordinate di Cerignola, Puglia
+    private static readonly LATITUDE = 41.2667;
+    private static readonly LONGITUDE = 15.9000;
 
     public static async getWeather(): Promise<WeatherResponse> {
-        const response = await fetch(
-            `${WeatherService.API_URL}?latitude=${WeatherService.LATITUDE}&longitude=${WeatherService.LONGITUDE}&current_weather=true`
-        );  
+        const cacheKey = `weather:${WeatherService.LATITUDE}:${WeatherService.LONGITUDE}`;
         
-        if (!response.ok) {
-            throw new Error(`Failed to fetch weather: ${response.statusText}`);
-        }
-        
-        return await response.json() as WeatherResponse;
+        return CacheService.get(cacheKey, async () => {
+            const response = await fetch(
+                `${WeatherService.API_URL}?latitude=${WeatherService.LATITUDE}&longitude=${WeatherService.LONGITUDE}&current_weather=true`
+            );  
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch weather: ${response.statusText}`);
+            }
+            
+            return await response.json() as WeatherResponse;
+        });
     }
 
     public static getWeatherDescription(wCode: number): string {

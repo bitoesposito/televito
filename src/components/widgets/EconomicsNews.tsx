@@ -1,30 +1,30 @@
 import { useEffect, useState } from "react";
 import TitleBox from "../utility/TitleBox";
-import NewsService from "../../services/news.service";
+import EconomicsService from "../../services/economics.service";
 
-export default function LastNewsWidget() {
+export default function EconomicsNewsWidget() {
   const [newsData, setNewsData] = useState([]);
 
   useEffect(() => {
-    NewsService.getNews(3)
+    EconomicsService.getEconomicsNews(3)
       .then((data) => setNewsData(data))
       .catch((err) => {
-        console.error("Failed to load news:", err);
+        console.error("Failed to load economics news:", err);
       });
   }, []);
 
   return (
     <div className="p-2 border-1 border-gray-500 h-min">
-      <TitleBox color="yellow" title="ultim'ora (notizie)" size="md" className="mb-2" />
+      <TitleBox color="red" title="economia (notizie)" size="md" className="mb-2" />
       <ul className="mb-2">
         {newsData.map((item: any, index: number) => (
           <li key={index}>
             <div className="flex gap-3">
-              <span className="w-7 text-center" style={{ color: "var(--yellow)" }}>
-                {index + 1 < 10 ? "20" : "2"}
+              <span className="w-7 text-center" style={{ color: "var(--red)" }}>
+                {index + 1 < 10 ? "40" : "4"}
                 {index + 1}
               </span>
-              <p className="uppercase" style={{ color: "var(--white)" }}>
+              <p className="uppercase" style={{ color: "var(--cyan)" }}>
                 {item.title || "Nessun titolo"}
               </p>
             </div>
@@ -36,7 +36,7 @@ export default function LastNewsWidget() {
       </ul>
       <TitleBox
         color="white"
-        title="vedi tutte (P. 200) >>"
+        title="vedi tutte (P. 400) >>"
         size="md"
         centerText={true}
         className="mt-2"
@@ -44,3 +44,5 @@ export default function LastNewsWidget() {
     </div>
   );
 }
+
+
