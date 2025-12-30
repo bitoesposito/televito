@@ -20,6 +20,7 @@ export interface HeaderProps {
   inputBuffer?: string;
   onInputChange: (value: string) => void;
   onConfirm: () => void;
+  className?: string;
 }
 
 export interface NavigationItem {

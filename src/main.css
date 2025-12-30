@@ -27,7 +27,7 @@ body {
   user-select: none;
   position: relative;
   animation: flicker 3s infinite;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 @keyframes flicker {
@@ -63,4 +63,14 @@ nav {
   position: fixed;
   bottom: 0;
   z-index: 9999;
+}
+
+/* Nascondi scrollbar ma mantieni scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }

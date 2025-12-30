@@ -20,15 +20,30 @@ function App() {
 
   // Measure header and navigation heights and calculate available height
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let lastHeight = 0;
+    const THRESHOLD = 2; // Soglia in pixel per evitare aggiornamenti inutili
+
     const updateHeights = () => {
       if (headerRef.current && navRef.current) {
         const headerH = headerRef.current.offsetHeight;
         const navH = navRef.current.offsetHeight;
-        const viewportHeight = window.innerHeight;
-        const available = viewportHeight - headerH - navH;
+        // Usa visualViewport se disponibile (più accurato su mobile), altrimenti window.innerHeight
+        const viewportHeight = window.visualViewport?.height || window.innerHeight;
+        const available = Math.max(0, viewportHeight - headerH - navH);
         
-        setAvailableHeight(available);
+        // Aggiorna solo se la differenza è significativa (evita flickering)
+        if (Math.abs(available - lastHeight) > THRESHOLD) {
+          lastHeight = available;
+          setAvailableHeight(available);
+        }
       }
+    };
+
+    // Debounced version per evitare troppi aggiornamenti
+    const debouncedUpdate = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateHeights, 50);
     };
 
     // Initial measurement
@@ -36,7 +51,7 @@ function App() {
 
     // Create ResizeObserver to watch for height changes
     const resizeObserver = new ResizeObserver(() => {
-      updateHeights();
+      debouncedUpdate();
     });
 
     if (headerRef.current) {
@@ -46,12 +61,23 @@ function App() {
       resizeObserver.observe(navRef.current);
     }
 
-    // Also listen to window resize as fallback
-    window.addEventListener("resize", updateHeights);
+    // Also listen to window resize as fallback (debounced)
+    window.addEventListener("resize", debouncedUpdate);
+    
+    // Su mobile, ascolta anche i cambiamenti del visualViewport (per gestire la barra degli indirizzi)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", debouncedUpdate);
+      window.visualViewport.addEventListener("scroll", debouncedUpdate);
+    }
 
     return () => {
+      clearTimeout(timeoutId);
       resizeObserver.disconnect();
-      window.removeEventListener("resize", updateHeights);
+      window.removeEventListener("resize", debouncedUpdate);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", debouncedUpdate);
+        window.visualViewport.removeEventListener("scroll", debouncedUpdate);
+      }
     };
   }, []);
 
@@ -68,8 +94,14 @@ function App() {
   }, [navigateToPage]);
 
   return (
-    <main className="flex flex-col min-h-screen h-screen max-w-screen-lg mx-auto">
-      <div className="flex-1 flex flex-col overflow-hidden">
+    <main 
+      className="flex flex-col max-w-screen-lg mx-auto overflow-hidden"
+      style={{ 
+        height: '100dvh',
+        maxHeight: '100dvh'
+      }}
+    >
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
         <Header
           ref={headerRef}
           pageNumber={page}
@@ -78,15 +110,17 @@ function App() {
           onConfirm={confirmPage}
         />
         <div 
-          className="mx-4 overflow-hidden"
+          className="mx-4 overflow-hidden flex-1 min-h-0"
           style={{ 
-            height: `${availableHeight}px`
+            height: availableHeight > 0 ? `${availableHeight}px` : '100%',
+            maxHeight: availableHeight > 0 ? `${availableHeight}px` : '100%',
+            overflowY: 'hidden',
+            position: 'relative'
           }}
         >
           {renderedPage}
         </div>
       </div>
-
       <Navigation ref={navRef} onNavigate={navigateToPage} />
     </main>
   );

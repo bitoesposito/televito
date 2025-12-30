@@ -30,15 +30,58 @@ export default function IndexPage() {
   });
 
   useEffect(() => {
+    let debounceTimeout: ReturnType<typeof setTimeout>;
+    let stabilizationTimeout: ReturnType<typeof setTimeout>;
+    let lastAvailableHeight = 0;
+    let isStabilizing = false;
+    const HEIGHT_THRESHOLD = 15; // Soglia aumentata per evitare aggiornamenti inutili
+    const STABILIZATION_DELAY = 500; // Tempo di attesa aumentato dopo un cambio di visibilità
+
     const checkWidgetVisibility = () => {
+      // Non eseguire il check durante la stabilizzazione
+      if (isStabilizing) {
+        return;
+      }
+
       if (!containerRef.current || !titleRef.current || !measurementRef.current) {
         return;
       }
 
-      const containerHeight = containerRef.current.offsetHeight;
-      const titleHeight = titleRef.current.offsetHeight;
-      const gap = 8; // gap tra gli elementi (gap-3 = 8px)
-      const availableHeight = containerHeight - titleHeight - gap;
+      // Calcola l'altezza disponibile dal container principale (più stabile)
+      // Non usare rightColumnRef perché cambia quando i widget vengono mostrati/nascosti
+      let availableHeight = 0;
+      
+      if (containerRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const titleRect = titleRef.current.getBoundingClientRect();
+        const gap = 12;
+        availableHeight = containerRect.height - titleRect.height - gap;
+        
+        // Su mobile, sottrai anche l'altezza della colonna sinistra se visibile
+        if (leftColumnRef.current && window.innerWidth < 640) {
+          const leftColumnRect = leftColumnRef.current.getBoundingClientRect();
+          availableHeight -= leftColumnRect.height + gap;
+        }
+      }
+      
+      // Evita aggiornamenti se l'altezza non è cambiata significativamente (previene flickering)
+      if (Math.abs(availableHeight - lastAvailableHeight) < HEIGHT_THRESHOLD && isInitializedRef.current) {
+        return;
+      }
+      lastAvailableHeight = availableHeight;
+      
+      // Assicurati che l'altezza disponibile sia positiva
+      if (availableHeight <= 0) {
+        setVisibleWidgets({
+          lastNews: false,
+          tvGuide: false,
+          economics: false,
+          culture: false,
+        });
+        return;
+      }
+      
+      const gap = 12; // gap tra gli elementi (gap-3 = 12px in Tailwind)
 
       // Usa doppio requestAnimationFrame per assicurarsi che il DOM sia completamente renderizzato
       requestAnimationFrame(() => {
@@ -113,9 +156,24 @@ export default function IndexPage() {
             currentVisibilityRef.current = newVisibility;
             setVisibleWidgets(newVisibility);
             isInitializedRef.current = true;
+            
+            // Attiva il lock di stabilizzazione per evitare re-calcoli immediati
+            isStabilizing = true;
+            clearTimeout(stabilizationTimeout);
+            stabilizationTimeout = setTimeout(() => {
+              isStabilizing = false;
+            }, STABILIZATION_DELAY);
           }
         });
       });
+    };
+
+    // Debounced version per evitare troppi aggiornamenti
+    const debouncedCheck = () => {
+      clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(() => {
+        checkWidgetVisibility();
+      }, 100);
     };
 
     // Initial check with a small delay to allow DOM to render
@@ -123,9 +181,10 @@ export default function IndexPage() {
       checkWidgetVisibility();
     }, 100);
 
-    // Use ResizeObserver to watch for size changes
+    // Use ResizeObserver to watch for size changes (debounced)
+    // NON osservare rightColumnRef perché cambia quando i widget vengono mostrati/nascosti (causa loop)
     const resizeObserver = new ResizeObserver(() => {
-      checkWidgetVisibility();
+      debouncedCheck();
     });
 
     if (containerRef.current) {
@@ -137,22 +196,22 @@ export default function IndexPage() {
     if (leftColumnRef.current) {
       resizeObserver.observe(leftColumnRef.current);
     }
-    if (rightColumnRef.current) {
-      resizeObserver.observe(rightColumnRef.current);
-    }
+    // NON osservare rightColumnRef per evitare loop
 
-    // Also listen to window resize
-    window.addEventListener("resize", checkWidgetVisibility);
+    // Also listen to window resize (debounced)
+    window.addEventListener("resize", debouncedCheck);
 
     return () => {
       clearTimeout(timeoutId);
+      clearTimeout(debounceTimeout);
+      clearTimeout(stabilizationTimeout);
       resizeObserver.disconnect();
-      window.removeEventListener("resize", checkWidgetVisibility);
+      window.removeEventListener("resize", debouncedCheck);
     };
   }, []);
 
   return (
-    <div ref={containerRef} className="flex flex-col gap-3 h-full overflow-hidden">
+    <div ref={containerRef} className="flex flex-col gap-3 h-full overflow-hidden" style={{ height: '100%' }}>
       <div ref={titleRef} className="flex-shrink-0">
         <TitleBox color="blue" title="Benvenuti al televito" size="lg" />
       </div>
@@ -163,7 +222,7 @@ export default function IndexPage() {
             <WeatherWidget />
           </div>
         </div>
-        <div ref={rightColumnRef} className="flex flex-col gap-3 overflow-hidden relative">
+        <div ref={rightColumnRef} className="flex flex-col gap-3 overflow-hidden relative min-h-0">
           {/* Contenitore nascosto per misurare le altezze - sempre presente ma invisibile */}
           <div 
             ref={measurementRef}

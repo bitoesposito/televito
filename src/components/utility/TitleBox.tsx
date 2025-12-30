@@ -58,9 +58,9 @@ export default function TitleBox({
         ${className ?? ""}
         ${getSize(size)}
         ${centerText ? "text-center" : ""}
-        uppercase font-bold whitespace-nowrap min-w-[8rem]
+        uppercase font-bold min-w-[8rem]
       `}
-      style={{ backgroundColor: getBgColor(color), color: getTextColor(color) }}
+      style={{ backgroundColor: getBgColor(color), color: getTextColor(color), lineHeight: '1' }}
       onClick={onClick}
     >
       <h2 className="m-0 p-0">{title}</h2>
