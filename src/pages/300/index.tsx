@@ -201,14 +201,14 @@ export default function GuidaTvPage({ page = 300 }) {
                   }}
                 >
                   <div className="flex gap-3">
-                    <span className="w-[3rem]" style={{ color: "var(--green)" }}>
+                    <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
                       {index + 1 < 10 ? "30" : "3"}
                       {index + 1}
                     </span>
                     <div className="flex flex-col flex-1">
                       <div className="flex">
                         {(program.time || program.onair) && (
-                          <p className="w-[3rem]" style={{ color: "var(--yellow)" }}>
+                          <p className="w-[3rem]" style={{ color: "var(--cyan)" }}>
                             {(program.time || program.onair || "").split(' ')[1] || (program.time || program.onair || "")}
                           </p>
                         )}
@@ -238,20 +238,20 @@ export default function GuidaTvPage({ page = 300 }) {
                   }}
                 >
                   <div className="flex gap-3">
-                    <span className="w-[3rem]" style={{ color: "var(--green)" }}>
+                    <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
                       {index + 1 < 10 ? "30" : "3"}
                       {index + 1}
                     </span>
                     <div className="flex flex-col flex-1">
                       <div className="flex">
                         {(program.time || program.onair) && (
-                          <p className="w-[3rem]" style={{ color: "var(--yellow)" }}>
+                          <p className="w-[3rem]" style={{ color: "var(--cyan)" }}>
                             {(program.time || program.onair || "").split(' ')[1] || (program.time || program.onair || "")}
                           </p>
                         )}
                         {program.channel && (
                           <p className="truncate" style={{ color: "var(--cyan)" }}>
-                            {program.channel}
+                            | {program.channel}
                           </p>
                         )}
                       </div>
@@ -263,6 +263,11 @@ export default function GuidaTvPage({ page = 300 }) {
                 </li>
               ))}
           </ul>
+          {!loading && programsData.length > 0 && (
+            <p className="mt-6 uppercase opacity-50" >
+              digita il numero specifico per approfondire
+            </p>
+          )}
         </div>
       )}
     </div>

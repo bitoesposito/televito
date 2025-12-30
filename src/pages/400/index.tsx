@@ -66,22 +66,29 @@ export default function EconomiaPage({ page = 400 }) {
       {loading ? (
         <p className="mt-4" style={{ color: "var(--yellow)" }}>Ricerca segnale...</p>
       ) : (
-        <ul className="mt-4 space-y-2">
-          {newsData.length > 0 &&
-            newsData.map((item: any, index: number) => (
-              <li key={index}>
-                <div className="flex gap-3">
-                  <span className="w-[3rem]" style={{ color: "var(--red)" }}>
-                    {index + 1 < 10 ? "40" : "4"}
-                    {index + 1}
-                  </span>
-                  <p className="uppercase">
-                    {item.title}
-                  </p>
-                </div>
-              </li>
-            ))}
-        </ul>
+        <>
+          <ul className="mt-4 space-y-2">
+            {newsData.length > 0 &&
+              newsData.map((item: any, index: number) => (
+                <li key={index}>
+                  <div className="flex gap-3">
+                    <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
+                      {index + 1 < 10 ? "40" : "4"}
+                      {index + 1}
+                    </span>
+                    <p className="uppercase">
+                      {item.title}
+                    </p>
+                  </div>
+                </li>
+              ))}
+          </ul>
+          {!loading && newsData.length > 0 && (
+            <p className="mt-6 uppercase opacity-50" >
+              digita il numero specifico per approfondire
+            </p>
+          )}
+        </>
       )}
     </>
   );

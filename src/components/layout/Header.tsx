@@ -33,49 +33,96 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
     const { hours, minutes, seconds } = formatTime(time);
 
+    // Extract last digit for blinker positioning
+    const displayValue = inputBuffer || pageNumber.toString();
+    const lastDigit = displayValue.slice(-1);
+    const beforeLastDigit = displayValue.slice(0, -1);
+    const showBlinker = !inputBuffer; // Show blinker only when not typing
+
+    const [isFocused, setIsFocused] = useState(false);
+
     return (
-      <header ref={ref} className={`w-full flex justify-between gap-3 p-4 ${className}`}>
-        <div className="relative flex items-center gap-2" onClick={() => inputRef.current?.focus()}>
-          <span className="w-[3rem] whitespace-nowrap">P. {inputBuffer || pageNumber}</span>
+      <header ref={ref} className={`w-full flex justify-between items-baseline gap-3 p-4 ${className}`}>
+        <div className="relative flex items-baseline gap-1">
+          <span className="whitespace-nowrap">P.</span>
+          <div 
+            className="relative inline-flex items-baseline"
+            onClick={() => inputRef.current?.focus()}
+          >
+            {/* Box visibile tipo input - solo su mobile */}
+            <div 
+              className={`
+                sm:hidden
+                inline-flex items-baseline justify-start
+                w-[3rem] px-2
+                border-2 border-white
+                transition-all
+                ${isFocused ? 'border-yellow ring-2 ring-yellow' : 'hover:border-yellow'}
+              `}
+              style={{ 
+                borderColor: isFocused ? 'var(--yellow)' : 'var(--white)',
+                boxShadow: isFocused ? '0 0 0 1px var(--yellow)' : 'none'
+              }}
+            >
+              <span className="whitespace-nowrap">
+                {beforeLastDigit}
+                <span>
+                  {lastDigit}
+                  {showBlinker && <span className="page-cursor" aria-hidden="true" />}
+                </span>
+              </span>
+            </div>
+            {/* Testo normale su desktop */}
+            <span className="hidden sm:inline whitespace-nowrap">
+              {beforeLastDigit}
+              <span>
+                {lastDigit}
+                {showBlinker && <span className="page-cursor" aria-hidden="true" />}
+              </span>
+            </span>
+            {/* Input invisibile per la gestione dell'input */}
+            <input
+              ref={inputRef}
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={inputBuffer}
+              onChange={(e) => onInputChange(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") onConfirm();
+                else if (!/[0-9]/.test(e.key) && !allowedKeys.includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              onPaste={(e) => {
+                e.preventDefault();
+                const numbersOnly = e.clipboardData
+                  .getData("text")
+                  .replace(/\D/g, "")
+                  .slice(0, 3);
+                if (numbersOnly) onInputChange(numbersOnly);
+              }}
+              maxLength={3}
+              autoComplete="off"
+              className="absolute inset-0 opacity-0 outline-none border-none text-transparent bg-transparent cursor-text"
+              aria-label="Inserisci numero pagina"
+            />
+          </div>
           <span className="text-white opacity-50 sm:hidden truncate">
              Clicca per navigare
           </span>
-          <input
-            ref={inputRef}
-            type="tel"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={inputBuffer}
-            onChange={(e) => onInputChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") onConfirm();
-              else if (!/[0-9]/.test(e.key) && !allowedKeys.includes(e.key)) {
-                e.preventDefault();
-              }
-            }}
-            onPaste={(e) => {
-              e.preventDefault();
-              const numbersOnly = e.clipboardData
-                .getData("text")
-                .replace(/\D/g, "")
-                .slice(0, 3);
-              if (numbersOnly) onInputChange(numbersOnly);
-            }}
-            maxLength={3}
-            autoComplete="off"
-            className="absolute top-0 left-0 w-[2rem] ml-[.75rem] opacity-0 outline-none border-none text-transparent bg-transparent cursor-default"
-            aria-label="Inserisci numero pagina"
-          />
         </div>
 
-        <div className="flex gap-4" style={{ color: 'var(--green)' }}>
+        <div className="flex items-baseline gap-2" style={{ color: 'var(--green)' }}>
           <div className="whitespace-nowrap" id="date">{formatDate(time)}</div>
-          <div id="time" className="flex gap-1 whitespace-nowrap">
-            <span className="inline-block w-[1.25rem]">{hours}</span>
+          <div id="time" className="flex items-baseline gap-1 whitespace-nowrap">
+            <span className="inline-block w-[1rem]">{hours}</span>
             <span>:</span>
-            <span className="inline-block w-[1.25rem]">{minutes}</span>
+            <span className="inline-block w-[1rem]">{minutes}</span>
             <span>:</span>
-            <span className="inline-block w-[1.25rem]">{seconds}</span>
+            <span className="inline-block w-[1rem]">{seconds}</span>
           </div>
         </div>
       </header>

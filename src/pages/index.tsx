@@ -102,7 +102,31 @@ export default function IndexPage() {
 
           // Se non abbiamo tutte le altezze, aspetta ancora
           if (widgetHeights.length < 4) {
-            setTimeout(checkWidgetVisibility, 50);
+            setTimeout(checkWidgetVisibility, 100);
+            return;
+          }
+
+          // Verifica che i widget abbiano contenuto caricato (non solo "RICERCA SEGNALE IN CORSO...")
+          // Controlla se ci sono elementi <ul> con contenuto reale
+          let allWidgetsLoaded = true;
+          widgets.forEach((widget) => {
+            const ulElements = widget.querySelectorAll('ul');
+            if (ulElements.length > 0) {
+              // Controlla se l'ul ha figli li (contenuto reale) o solo il messaggio di caricamento
+              ulElements.forEach((ul) => {
+                const listItems = ul.querySelectorAll('li');
+                const loadingMessage = ul.textContent?.includes('RICERCA SEGNALE');
+                // Se c'è solo il messaggio di caricamento e nessun item, il widget non è ancora pronto
+                if (loadingMessage && listItems.length === 0) {
+                  allWidgetsLoaded = false;
+                }
+              });
+            }
+          });
+
+          // Se i widget non sono ancora completamente caricati, aspetta ancora
+          if (!allWidgetsLoaded && !isInitializedRef.current) {
+            setTimeout(checkWidgetVisibility, 200);
             return;
           }
 
@@ -176,16 +200,39 @@ export default function IndexPage() {
       }, 100);
     };
 
-    // Initial check with a small delay to allow DOM to render
+    // Initial check with a delay to allow DOM to render and widgets to load data
+    // Aumentato a 300ms per dare tempo ai widget di caricare i dati
     const timeoutId = setTimeout(() => {
       checkWidgetVisibility();
-    }, 100);
+    }, 300);
 
     // Use ResizeObserver to watch for size changes (debounced)
     // NON osservare rightColumnRef perché cambia quando i widget vengono mostrati/nascosti (causa loop)
     const resizeObserver = new ResizeObserver(() => {
       debouncedCheck();
     });
+
+    // ResizeObserver specifico per i widget nel measurementRef
+    // Questo rileva quando i widget cambiano dimensione dopo il caricamento dei dati
+    const widgetResizeObserver = new ResizeObserver(() => {
+      // Solo se non è ancora inizializzato o se è passato abbastanza tempo dalla stabilizzazione
+      if (!isStabilizing) {
+        debouncedCheck();
+      }
+    });
+
+    // Funzione per osservare i widget nel measurementRef
+    const observeWidgets = () => {
+      if (measurementRef.current) {
+        // Osserva il container dei widget
+        widgetResizeObserver.observe(measurementRef.current);
+        // Osserva anche i singoli widget dentro il measurementRef
+        const widgets = Array.from(measurementRef.current.children) as HTMLElement[];
+        widgets.forEach((widget) => {
+          widgetResizeObserver.observe(widget);
+        });
+      }
+    };
 
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
@@ -196,6 +243,12 @@ export default function IndexPage() {
     if (leftColumnRef.current) {
       resizeObserver.observe(leftColumnRef.current);
     }
+    
+    // Osserva i widget dopo un breve delay per assicurarsi che siano renderizzati
+    const widgetObservationTimeout = setTimeout(() => {
+      observeWidgets();
+    }, 200);
+    
     // NON osservare rightColumnRef per evitare loop
 
     // Also listen to window resize (debounced)
@@ -205,7 +258,9 @@ export default function IndexPage() {
       clearTimeout(timeoutId);
       clearTimeout(debounceTimeout);
       clearTimeout(stabilizationTimeout);
+      clearTimeout(widgetObservationTimeout);
       resizeObserver.disconnect();
+      widgetResizeObserver.disconnect();
       window.removeEventListener("resize", debouncedCheck);
     };
   }, []);

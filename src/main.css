@@ -73,3 +73,22 @@ nav {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+/* Blinker animation for page number cursor */
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.page-cursor {
+  display: inline-block;
+  width: 0.25em;
+  height: .6em;
+  background-color: currentColor;
+  animation: blink 1s infinite;
+  margin-left: 0.05em;
+}

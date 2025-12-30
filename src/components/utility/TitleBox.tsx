@@ -46,7 +46,7 @@ export default function TitleBox({
       case "green":
         return "var(--black)";
       case "red":
-        return "var(--black)";
+        return "var(--white)";
       case "cyan":
         return "var(--black)";
     }
