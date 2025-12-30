@@ -20,11 +20,11 @@ export default function CultureNewsWidget() {
         {newsData.map((item: any, index: number) => (
           <li key={index}>
             <div className="flex gap-3">
-              <span className="w-7 text-center" style={{ color: "var(--cyan)" }}>
+              <span className="w-7 text-center" style={{ color: "var(--yellow)" }}>
                 {index + 1 < 10 ? "50" : "5"}
                 {index + 1}
               </span>
-              <p className="uppercase" style={{ color: "var(--cyan)" }}>
+              <p className="uppercase" style={{ color: "var(--white)" }}>
                 {item.title || "Nessun titolo"}
               </p>
             </div>

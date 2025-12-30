@@ -20,11 +20,11 @@ export default function EconomicsNewsWidget() {
         {newsData.map((item: any, index: number) => (
           <li key={index}>
             <div className="flex gap-3">
-              <span className="w-7 text-center" style={{ color: "var(--red)" }}>
+              <span className="w-7 text-center" style={{ color: "var(--yellow)" }}>
                 {index + 1 < 10 ? "40" : "4"}
                 {index + 1}
               </span>
-              <p className="uppercase" style={{ color: "var(--cyan)" }}>
+              <p className="uppercase" style={{ color: "var(--white)" }}>
                 {item.title || "Nessun titolo"}
               </p>
             </div>
