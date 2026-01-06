@@ -43,7 +43,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
     return (
       <header ref={ref} className={`w-full flex justify-between items-baseline gap-3 p-4 ${className}`}>
-        <div className="relative flex items-baseline gap-1">
+        <div className="relative flex items-baseline gap-1" style={{ fontFamily: 'var(--jersey-font)', fontWeight: 'var(--jersey-weight)', fontSize: 'var(--jersey-size)' }}>
           <span className="whitespace-nowrap">P.</span>
           <div 
             className="relative inline-flex items-baseline"

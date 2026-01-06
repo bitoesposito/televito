@@ -60,10 +60,10 @@ export default function TitleBox({
         ${centerText ? "text-center" : ""}
         uppercase font-bold min-w-[8rem]
       `}
-      style={{ backgroundColor: getBgColor(color), color: getTextColor(color), lineHeight: '1' }}
+      style={{ backgroundColor: getBgColor(color), color: getTextColor(color), lineHeight: '1'}}
       onClick={onClick}
     >
-      <h2 className="m-0 p-0">{title}</h2>
+      <h2 className="m-0 p-0" style={{ fontFamily: 'var(--jersey-font)', fontWeight: 'var(--jersey-weight)', fontSize: 'var(--jersey-size)' }}>{title}</h2>
     </div>
   );
 }
