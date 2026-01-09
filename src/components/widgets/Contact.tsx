@@ -5,7 +5,7 @@ export default function ContactWidget() {
     <div className="h-min">
       <TitleBox color="cyan" title="Chi sono" size="md" className="mb-2" />
       <p className="uppercase" style={{ color: "var(--white)" }}>
-        Vito Esposito - ux engineer
+        Vito Esposito - Frontend Developer
       </p>
       <p className="uppercase opacity-50" style={{ color: "var(--white)" }}>
         integrazione tra design e sviluppo per applicazioni web
