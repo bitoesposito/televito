@@ -58,7 +58,7 @@ export default function ContactWidget() {
       <TitleBox
         onClick={() => window.open("https://blog.vitoesposito.it", "_blank")}
         color="yellow"
-        title="vai al portfolio >>"
+        title="vai al blog >>"
         size="lg"
         className="cursor-pointer mt-4 mb-2"
         centerText={true}
