@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 // utility
 export type TelevideoColor = "blue" | "green" | "yellow" | "red" | "white" | "cyan";
-export type TelevideoSize = "md" | "lg";
+export type TelevideoSize = "sm" | "md" | "lg";
 
 // components 
 export interface TitleBoxProps {

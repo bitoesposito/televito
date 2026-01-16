@@ -19,8 +19,8 @@ export default function LastNewsWidget() {
       <ul className="mb-2">
         {newsData.map((item: any, index: number) => (
           <li key={index}>
-            <div className="flex gap-3">
-              <span className="w-7 text-center" style={{ color: "var(--yellow)" }}>
+            <div className="flex gap-3 mb-2">
+              <span className="w-[2.5rem]" style={{ color: "var(--yellow)" }}>
                 {index + 1 < 10 ? "20" : "2"}
                 {index + 1}
               </span>

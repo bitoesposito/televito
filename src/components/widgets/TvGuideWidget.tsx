@@ -19,10 +19,10 @@ export default function TvGuideWidget() {
       <ul className="mb-2">
         {programsData.map((program: any, index: number) => (
           <li key={index}>
-            <div className="flex flex-col">
+            <div className="flex flex-col mb-2">
               <div className="flex gap-3">
                 {(program.time || program.onair) && (
-                  <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
+                  <span className="w-[4rem]" style={{ color: "var(--yellow)" }}>
                     {(program.time || program.onair || "").split(' ')[1] || (program.time || program.onair || "")}
                   </span>
                 )}

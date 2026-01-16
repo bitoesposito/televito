@@ -54,7 +54,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               className={`
                 sm:hidden
                 inline-flex items-baseline justify-start
-                w-[3rem] px-2
+                w-[3.5rem] px-2
                 border-2 border-white
                 transition-all
                 ${isFocused ? 'border-yellow ring-2 ring-yellow' : 'hover:border-yellow'}
@@ -110,20 +110,14 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               aria-label="Inserisci numero pagina"
             />
           </div>
-          <span className="text-white opacity-50 sm:hidden truncate">
-             Clicca per navigare
+          <span className="text-white opacity-50 sm:hidden truncate pl-2">
+             Nagiva qui
           </span>
         </div>
 
         <div className="flex items-baseline gap-2" style={{ color: 'var(--green)' }}>
           <div className="whitespace-nowrap" id="date">{formatDate(time)}</div>
-          <div id="time" className="flex items-baseline gap-1 whitespace-nowrap">
-            <span className="inline-block w-[1rem]">{hours}</span>
-            <span>:</span>
-            <span className="inline-block w-[1rem]">{minutes}</span>
-            <span>:</span>
-            <span className="inline-block w-[1rem]">{seconds}</span>
-          </div>
+          <span>{hours}:{minutes}:{seconds}</span>
         </div>
       </header>
     );

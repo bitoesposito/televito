@@ -3,15 +3,15 @@ import TitleBox from "../utility/TitleBox";
 export default function ContactWidget() {
   return (
     <div className="h-min">
-      <TitleBox color="cyan" title="Chi sono" size="md" className="mb-2" />
-      <p className="uppercase" style={{ color: "var(--white)" }}>
+      <TitleBox color="cyan" title="Chi sono" size="md" className="mb-4" />
+      <p className="uppercase" style={{ color: "var(--cyan)" }}>
         Vito Esposito - Frontend Developer
       </p>
-      <p className="uppercase opacity-50" style={{ color: "var(--white)" }}>
-        integrazione tra design e sviluppo per applicazioni web
+      <p className="mb-4" style={{ color: "var(--white)" }}>
+        Integrazione tra design e sviluppo per applicazioni web
       </p>
 
-      <TitleBox color="white" title="contatti" size="md" className="my-2" />
+      <TitleBox color="white" title="contatti" size="md" className="mb-4" />
 
       {/* email */}
       <div className="flex gap-3">
@@ -55,14 +55,23 @@ export default function ContactWidget() {
         </div>
       </div>
 
-      <TitleBox
-        onClick={() => window.open("https://blog.vitoesposito.it", "_blank")}
-        color="yellow"
-        title="vai al blog >>"
-        size="lg"
-        className="cursor-pointer mt-4 mb-2"
-        centerText={true}
-      />
+      <p className=' opacity-50 my-2 uppercase'>oppure</p>
+
+      
+      <div className="flex flex-col">
+        <p className="uppercase" style={{ color: "var(--cyan)" }}>
+          visita il blog:
+        </p>
+        <a
+            className="uppercase underline"
+            style={{ color: "var(--white)" }}
+            href="https://blog.vitoesposito.it"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            blog.vitoesposito.it
+          </a>
+      </div>
     </div>
   );
 }

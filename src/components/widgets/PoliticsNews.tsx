@@ -19,8 +19,8 @@ export default function PoliticsNewsWidget() {
       <ul className="mb-2">
         {newsData.map((item: any, index: number) => (
           <li key={index}>
-            <div className="flex gap-3">
-              <span className="w-7 text-center" style={{ color: "var(--green)" }}>
+            <div className="flex gap-3 mb-2">
+              <span className="w-[2.5rem]" style={{ color: "var(--green)" }}>
                 {index + 1 < 10 ? "30" : "3"}
                 {index + 1}
               </span>

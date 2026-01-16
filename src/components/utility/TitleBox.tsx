@@ -1,4 +1,8 @@
-import type { TitleBoxProps, TelevideoColor, TelevideoSize } from "../../types/televideo";
+import type {
+  TitleBoxProps,
+  TelevideoColor,
+  TelevideoSize,
+} from "../../types/televideo";
 
 export default function TitleBox({
   color = "blue",
@@ -8,13 +12,14 @@ export default function TitleBox({
   className = "",
   onClick,
 }: TitleBoxProps) {
-  
   function getSize(size: TelevideoSize) {
     switch (size) {
+      case "sm":
+        return "p-2 text-xs";
       case "md":
         return "px-2 py-1";
       case "lg":
-        return "px-2 py-2 text-3xl";
+        return "px-2 py-2 text-lg";
     }
   }
 
@@ -60,10 +65,18 @@ export default function TitleBox({
         ${centerText ? "text-center" : ""}
         uppercase font-bold min-w-[8rem]
       `}
-      style={{ backgroundColor: getBgColor(color), color: getTextColor(color), lineHeight: '1'}}
+      style={{
+        backgroundColor: getBgColor(color),
+        color: getTextColor(color),
+        lineHeight: "1",
+      }}
       onClick={onClick}
     >
-      <h2 className="m-0 p-0" style={{ fontFamily: 'var(--jersey-font)', fontWeight: 'var(--jersey-weight)', fontSize: 'var(--jersey-size)' }}>{title}</h2>
+      <h2
+        className="m-0 p-0 truncate"
+      >
+        {title}
+      </h2>
     </div>
   );
 }
