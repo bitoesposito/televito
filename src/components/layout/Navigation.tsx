@@ -1,6 +1,6 @@
 import TitleBox from "../utility/TitleBox";
 import { useNavigation } from "../../hooks/useNavigation";
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 
 export interface NavigationProps {
   onNavigate?: (page: number) => void;
