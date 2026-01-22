@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useRef, useCallback, createElement, type ReactNode } from "react";
-import type { NavigationItem } from "../types/televideo";
+import type { NavigationItem, NavigationState, NavigationAction, NavigationContextValue, NavigationProviderProps } from "../types/televideo";
 
 import IndexPage from "../pages/index";
 import NotFoundPage from "../pages/not-found";
@@ -98,17 +98,6 @@ export function getPageComponent(page: number) {
 }
 
 // State and Reducer
-export interface NavigationState {
-	page: number;
-	inputBuffer: string;
-}
-
-export type NavigationAction =
-	| { type: "SET_PAGE"; payload: number }
-	| { type: "SET_INPUT_BUFFER"; payload: string }
-	| { type: "NAVIGATE_TO_PAGE"; payload: number }
-	| { type: "CLEAR_INPUT" };
-
 export function navigationReducer(state: NavigationState, action: NavigationAction): NavigationState {
 	switch (action.type) {
 		case "SET_PAGE":
@@ -138,13 +127,6 @@ export function navigationReducer(state: NavigationState, action: NavigationActi
 }
 
 // Context
-interface NavigationContextValue extends NavigationState {
-	handleInput: (value: string) => void;
-	confirmPage: () => void;
-	navigateToPage: (targetPage: number) => void;
-	renderedPage: ReactNode;
-}
-
 const NavigationContext = createContext<NavigationContextValue | undefined>(undefined);
 
 const initialState: NavigationState = {
@@ -153,10 +135,6 @@ const initialState: NavigationState = {
 };
 
 // Provider
-interface NavigationProviderProps {
-	children: ReactNode;
-}
-
 export function NavigationProvider({ children }: NavigationProviderProps) {
 	const [state, dispatch] = useReducer(navigationReducer, initialState);
 	const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);

@@ -17,7 +17,7 @@ export default class TvGuideService {
                 return await response.json();
             });
             
-            // La struttura potrebbe essere un array diretto o un oggetto con una proprietà che contiene l'array
+            // Structure could be a direct array or an object with a property containing the array
             let programs: any[] = [];
             
             if (Array.isArray(data)) {
@@ -32,10 +32,10 @@ export default class TvGuideService {
                 throw new Error("No TV guide programs found");
             }
             
-            // Normalizza i dati per avere una struttura consistente
+            // Normalize data to have a consistent structure
             const programsToProcess = maxItems ? programs.slice(0, maxItems) : programs;
             return programsToProcess.map((program: any) => {
-                // Estrai il nome del canale se è un oggetto
+                // Extract channel name if it's an object
                 let channelName = "";
                 if (program.channel) {
                     if (typeof program.channel === "string") {
@@ -49,25 +49,25 @@ export default class TvGuideService {
                     channelName = typeof program.station === "string" ? program.station : program.station.name || "";
                 }
 
-                // Estrai il titolo
-                const title = program.title || program.name || program.program_title || "Programma senza titolo";
+                // Extract title
+                const title = program.title || program.name || program.program_title || "Program without title";
                 
-                // Estrai la descrizione/contenuto
+                // Extract description/content
                 const description = program.description || program.synopsis || program.summary || "";
                 const content = description || title;
 
-                // Estrai l'orario (onair contiene la data e ora di inizio nel formato "DD-MM-YYYY HH:MM")
+                // Extract time (onair contains start date and time in format "DD-MM-YYYY HH:MM")
                 const onairValue = program.onair || "";
                 const time = onairValue || program.time || program.start_time || program.datetime || program.start || "";
 
                 return {
-                    // Mantieni tutti i dati originali per riferimento
+                    // Keep all original data for reference
                     ...program,
-                    // Sovrascrivi con i campi normalizzati (questi hanno precedenza)
+                    // Overwrite with normalized fields (these have precedence)
                     title,
                     channel: channelName,
-                    time: time || onairValue, // Assicurati che time sia sempre popolato se onair esiste
-                    onair: onairValue, // Mantieni anche onair originale
+                    time: time || onairValue, // Make sure time is always populated if onair exists
+                    onair: onairValue, // Also keep original onair
                     description,
                     content
                 };

@@ -1,10 +1,10 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
-// utility
+// Utility types
 export type TelevideoColor = "blue" | "green" | "yellow" | "red" | "white" | "cyan";
 export type TelevideoSize = "sm" | "md" | "lg";
 
-// components 
+// Component props
 export interface TitleBoxProps {
   color: TelevideoColor;
   size?: TelevideoSize;
@@ -14,7 +14,7 @@ export interface TitleBoxProps {
   onClick?: () => void;
 }
 
-// layout
+// Layout
 export interface HeaderProps {
   pageNumber: number;
   inputBuffer?: string;
@@ -32,7 +32,54 @@ export interface NavigationItem {
   component: ReactElement;
 }
 
-// weather
+export interface NavigationProps {
+  onNavigate?: (page: number) => void;
+}
+
+// Navigation state
+export interface NavigationState {
+  page: number;
+  inputBuffer: string;
+}
+
+export type NavigationAction =
+  | { type: "SET_PAGE"; payload: number }
+  | { type: "SET_INPUT_BUFFER"; payload: string }
+  | { type: "NAVIGATE_TO_PAGE"; payload: number }
+  | { type: "CLEAR_INPUT" };
+
+export interface NavigationContextValue extends NavigationState {
+  handleInput: (value: string) => void;
+  confirmPage: () => void;
+  navigateToPage: (targetPage: number) => void;
+  renderedPage: ReactNode;
+}
+
+export interface NavigationProviderProps {
+  children: ReactNode;
+}
+
+// Hooks
+export interface UseVisibleWidgetsOptions {
+  widgetCount: number;
+  gap?: number; // Gap between widgets in pixels
+  containerRef?: React.RefObject<Element | null>;
+}
+
+// Cache
+export interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+// RSS
+export interface RssData {
+  status: string;
+  items?: any[];
+  feed?: any;
+}
+
+// Weather
 export interface CurrentWeatherUnits {
   time: string;
   interval: string;

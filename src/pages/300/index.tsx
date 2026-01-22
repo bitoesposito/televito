@@ -52,7 +52,7 @@ export default function GuidaTvPage({ page = 300 }) {
       );
     }
 
-    // Formatta il contenuto con informazioni aggiuntive se disponibili
+    // Format content with additional information if available
     let content = selectedProgram.content;
     if (selectedProgram.channel) {
       content = `CANALE: ${selectedProgram.channel}\n\n${content}`;

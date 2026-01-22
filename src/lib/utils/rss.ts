@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import CacheService from "./cache";
-
-interface RssData {
-	status: string;
-	items?: any[];
-	feed?: any;
-}
+import type { RssData } from "../../types/televideo";
 
 const API_URL = "https://api.rss2json.com/v1/api.json";
 

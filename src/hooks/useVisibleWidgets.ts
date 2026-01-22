@@ -1,22 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-
-interface UseVisibleWidgetsOptions {
-	widgetCount: number;
-	gap?: number; // Gap tra i widget in pixel
-	containerRef?: React.RefObject<Element | null>;
-}
+import type { UseVisibleWidgetsOptions } from "../types/televideo";
 
 /**
- * Hook che calcola quanti widget possono essere mostrati completamente
- * nello spazio verticale disponibile, nascondendo quelli che non entrano.
- * Considera automaticamente header e navigation bar.
+ * Hook that calculates how many widgets can be displayed completely
+ * in the available vertical space, hiding those that don't fit.
+ * Automatically considers header and navigation bar.
  */
 export function useVisibleWidgets({
 	widgetCount,
 	gap = 12,
 	containerRef,
 }: UseVisibleWidgetsOptions) {
-	// Inizializza con tutti false per evitare flash iniziale
+	// Initialize with all false to avoid initial flash
 	const [visibleWidgets, setVisibleWidgets] = useState<boolean[]>(
 		Array(widgetCount).fill(false)
 	);
@@ -29,9 +24,9 @@ export function useVisibleWidgets({
 		const checkVisibility = () => {
 			if (!measurementRef.current) return;
 
-			// Trova navigation visibile nel DOM (può esserci sia mobile che desktop)
+			// Find visible navigation in DOM (can be both mobile and desktop)
 			const navs = document.querySelectorAll("nav");
-			// Trova la nav visibile (quella che non ha display: none)
+			// Find the visible nav (the one that doesn't have display: none)
 			let visibleNav: HTMLElement | null = null;
 			navs.forEach((nav) => {
 				const navElement = nav as HTMLElement;
@@ -41,21 +36,22 @@ export function useVisibleWidgets({
 				}
 			});
 
-			// Calcola l'altezza disponibile
+			// Calculate available height
 			let availableHeight = 0;
 
 			if (containerRef?.current) {
-				// Usa il containerRef per calcolare l'altezza disponibile
-				const containerRect = containerRef.current.getBoundingClientRect();
+				// Use containerRef to calculate available height
+				const containerElement = containerRef.current as HTMLElement;
+				const containerRect = containerElement.getBoundingClientRect();
 				const containerTop = containerRect.top;
 				const containerBottom = visibleNav
-					? visibleNav.getBoundingClientRect().top
+					? (visibleNav as HTMLElement).getBoundingClientRect().top
 					: window.innerHeight;
 				availableHeight = containerBottom - containerTop;
 			} else {
-				// Fallback: usa viewport meno header e navigation
+				// Fallback: use viewport minus header and navigation
 				const viewportHeight = window.innerHeight;
-				const header = document.querySelector("header");
+				const header = document.querySelector("header") as HTMLElement | null;
 				let usedHeight = 0;
 
 				if (header) {
@@ -63,22 +59,22 @@ export function useVisibleWidgets({
 				}
 
 				if (visibleNav) {
-					usedHeight += visibleNav.offsetHeight;
+					usedHeight += (visibleNav as HTMLElement).offsetHeight;
 				}
 
 				availableHeight = viewportHeight - usedHeight;
 			}
 
-			// Se non abbiamo altezza disponibile, nascondi tutto
+			// If we don't have available height, hide everything
 			if (availableHeight <= 0) {
 				setVisibleWidgets(Array(widgetCount).fill(false));
 				setIsInitialized(true);
 				return;
 			}
 
-			// Misura le altezze dei widget
+			// Measure widget heights
 			const widgetHeights: number[] = [];
-			// Il measurementRef contiene un div wrapper, quindi prendiamo i suoi figli
+			// measurementRef contains a div wrapper, so we take its children
 			const measurementContainer = measurementRef.current;
 			const wrapper = measurementContainer.firstElementChild as HTMLElement;
 			const widgets = wrapper ? Array.from(wrapper.children) as HTMLElement[] : [];
@@ -90,9 +86,9 @@ export function useVisibleWidgets({
 				}
 			});
 
-			// Se non abbiamo tutte le altezze, aspetta ma con un timeout massimo
+			// If we don't have all heights, wait but with a maximum timeout
 			if (widgetHeights.length < widgetCount) {
-				// Usa requestAnimationFrame per aspettare il rendering
+				// Use requestAnimationFrame to wait for rendering
 				requestAnimationFrame(() => {
 					requestAnimationFrame(() => {
 						setTimeout(checkVisibility, 50);
@@ -101,22 +97,22 @@ export function useVisibleWidgets({
 				return;
 			}
 
-			// Se non abbiamo altezze valide dopo diversi tentativi, mostra almeno il primo widget come fallback
+			// If we don't have valid heights after several attempts, show at least the first widget as fallback
 			if (widgetHeights.length === 0 || widgetHeights.every(h => h === 0)) {
-				// Aspetta ancora un po' se è la prima volta
+				// Wait a bit more if it's the first time
 				if (!isInitialized) {
 					setTimeout(checkVisibility, 200);
 					return;
 				}
-				// Dopo diversi tentativi, mostra almeno il primo widget
+				// After several attempts, show at least the first widget
 				const fallback = Array(widgetCount).fill(false);
-				fallback[0] = true; // Mostra almeno il primo
+				fallback[0] = true; // Show at least the first
 				setVisibleWidgets(fallback);
 				setIsInitialized(true);
 				return;
 			}
 
-			// Calcola quanti widget possono entrare completamente
+			// Calculate how many widgets can fit completely
 			const newVisibility: boolean[] = [];
 			let accumulatedHeight = 0;
 
@@ -128,7 +124,7 @@ export function useVisibleWidgets({
 					newVisibility.push(true);
 					accumulatedHeight = totalHeight;
 				} else {
-					// Non c'è più spazio, nascondi questo e tutti i successivi
+					// No more space, hide this and all subsequent ones
 					for (let j = i; j < widgetCount; j++) {
 						newVisibility.push(false);
 					}
@@ -136,7 +132,7 @@ export function useVisibleWidgets({
 				}
 			}
 
-			// Assicurati di avere sempre widgetCount elementi
+			// Make sure we always have widgetCount elements
 			while (newVisibility.length < widgetCount) {
 				newVisibility.push(false);
 			}
@@ -145,32 +141,32 @@ export function useVisibleWidgets({
 			setIsInitialized(true);
 		};
 
-		// Debounce per evitare troppi calcoli
+		// Debounce to avoid too many calculations
 		let debounceTimeout: ReturnType<typeof setTimeout>;
 		const debouncedCheck = () => {
 			clearTimeout(debounceTimeout);
 			debounceTimeout = setTimeout(checkVisibility, 50);
 		};
 
-		// Initial check con doppio requestAnimationFrame per assicurarsi che il DOM sia renderizzato
-		// Aumentiamo il delay per dare tempo ai widget di caricare i dati
+		// Initial check with double requestAnimationFrame to ensure DOM is rendered
+		// Increase delay to give widgets time to load data
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => {
 				setTimeout(checkVisibility, 300);
 			});
 		});
 
-		// ResizeObserver per reagire ai cambiamenti
+		// ResizeObserver to react to changes
 		const resizeObserver = new ResizeObserver(() => {
 			debouncedCheck();
 		});
 
-		// Osserva il container di misurazione
+		// Observe measurement container
 		if (measurementRef.current) {
 			resizeObserver.observe(measurementRef.current);
 		}
 
-		// Osserva i singoli widget
+		// Observe individual widgets
 		if (measurementRef.current) {
 			const wrapper = measurementRef.current.firstElementChild as HTMLElement;
 			if (wrapper) {
@@ -181,13 +177,13 @@ export function useVisibleWidgets({
 			}
 		}
 
-		// Osserva header e navigation se presenti
+		// Observe header and navigation if present
 		const header = document.querySelector("header");
 		const navs = document.querySelectorAll("nav");
 		if (header) {
 			resizeObserver.observe(header);
 		}
-		// Osserva tutte le nav (mobile e desktop)
+		// Observe all navs (mobile and desktop)
 		navs.forEach((nav) => {
 			resizeObserver.observe(nav);
 		});

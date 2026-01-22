@@ -1,9 +1,6 @@
 import TitleBox from "../utility/TitleBox";
 import { useNavigation } from "../../hooks/useNavigation";
-
-export interface NavigationProps {
-  onNavigate?: (page: number) => void;
-}
+import type { NavigationProps } from "../../types/televideo";
 
 function Navigation({ onNavigate }: NavigationProps) {
 	const { navigationItems } = useNavigation();

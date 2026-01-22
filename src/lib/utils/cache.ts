@@ -1,17 +1,14 @@
-interface CacheEntry<T> {
-    data: T;
-    timestamp: number;
-}
+import type { CacheEntry } from "../../types/televideo";
 
 export default class CacheService {
-    private static readonly CACHE_DURATION = 10 * 60 * 1000; // 10 minuti in millisecondi
+    private static readonly CACHE_DURATION = 10 * 60 * 1000; // 10 minutes in milliseconds
     private static cache: Map<string, CacheEntry<any>> = new Map();
 
     /**
-     * Ottiene i dati dalla cache se ancora validi, altrimenti esegue la funzione e salva il risultato
-     * @param key Chiave univoca per la cache
-     * @param fetchFunction Funzione che esegue la chiamata API se i dati non sono in cache o sono scaduti
-     * @returns I dati dalla cache o dalla chiamata API
+     * Gets data from cache if still valid, otherwise executes the function and saves the result
+     * @param key Unique key for the cache
+     * @param fetchFunction Function that executes the API call if data is not in cache or expired
+     * @returns Data from cache or from API call
      */
     public static async get<T>(
         key: string,
@@ -20,12 +17,12 @@ export default class CacheService {
         const cached = CacheService.cache.get(key);
         const now = Date.now();
 
-        // Se i dati sono in cache e ancora validi, restituiscili
+        // If data is in cache and still valid, return it
         if (cached && (now - cached.timestamp) < CacheService.CACHE_DURATION) {
             return cached.data;
         }
 
-        // Altrimenti, esegui la chiamata API e salva il risultato
+        // Otherwise, execute API call and save the result
         try {
             const data = await fetchFunction();
             CacheService.cache.set(key, {
@@ -34,7 +31,7 @@ export default class CacheService {
             });
             return data;
         } catch (error) {
-            // Se la chiamata fallisce e abbiamo dati in cache (anche scaduti), restituiscili come fallback
+            // If the call fails and we have cached data (even expired), return it as fallback
             if (cached) {
                 console.warn(`API call failed for ${key}, using stale cache data`);
                 return cached.data;
@@ -44,15 +41,15 @@ export default class CacheService {
     }
 
     /**
-     * Invalida la cache per una chiave specifica
-     * @param key Chiave da invalidare
+     * Invalidates cache for a specific key
+     * @param key Key to invalidate
      */
     public static invalidate(key: string): void {
         CacheService.cache.delete(key);
     }
 
     /**
-     * Pulisce tutta la cache
+     * Clears all cache
      */
     public static clear(): void {
         CacheService.cache.clear();
