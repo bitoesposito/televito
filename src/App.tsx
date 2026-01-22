@@ -8,7 +8,8 @@ function AppContent() {
 
 	return (
 		<main 
-			className="flex flex-col max-w-screen-lg mx-auto h-screen overflow-hidden"
+			className="flex flex-col max-w-screen-lg mx-auto overflow-hidden"
+			style={{ height: '100dvh' }}
 		>
 			<Header
 				pageNumber={page}
