@@ -1,19 +1,26 @@
 import { useMemo } from "react";
-import { navigationConfig, getNavigationItemByPage } from "../lib/navigation.config";
+import { useNavigationContext, navigationConfig, getNavigationItemByPage } from "../store/navigation";
 
 /**
  * Hook for navigation management
- * Provides navigation items and utilities for page routing
+ * Provides navigation items, current page state, and navigation utilities
  */
-export function useNavigation(currentPage?: number) {
-  const currentNavigationItem = useMemo(() => {
-    return currentPage ? getNavigationItemByPage(currentPage) : undefined;
-  }, [currentPage]);
+export function useNavigation() {
+	const { page, inputBuffer, handleInput, confirmPage, navigateToPage, renderedPage } = useNavigationContext();
 
-  return {
-    navigationItems: navigationConfig,
-    currentNavigationItem,
-    getNavigationItemByPage,
-  };
+	const currentNavigationItem = useMemo(() => {
+		return getNavigationItemByPage(page);
+	}, [page]);
+
+	return {
+		page,
+		inputBuffer,
+		handleInput,
+		confirmPage,
+		navigateToPage,
+		renderedPage,
+		navigationItems: navigationConfig,
+		currentNavigationItem,
+		getNavigationItemByPage,
+	};
 }
-

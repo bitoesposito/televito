@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import TitleBox from "../utility/TitleBox";
-import TvGuideService from "../../services/tvguide.service";
+import TvGuideService from "../../lib/tvGuide";
+import { useNavigation } from "../../hooks/useNavigation";
 
 export default function TvGuideWidget() {
   const [programsData, setProgramsData] = useState<any[]>([]);
-
+  const { navigateToPage } = useNavigation();
   useEffect(() => {
     TvGuideService.getTvGuide(3)
       .then((data) => setProgramsData(data))
@@ -43,11 +44,12 @@ export default function TvGuideWidget() {
         )}
       </ul>
       <TitleBox
+        onClick={() => navigateToPage(300)}
         color="white"
         title="vedi tutte (P. 300) >>"
         size="md"
         centerText={true}
-        className="mt-2"
+        className="mt-2 cursor-pointer"
       />
     </div>
   );

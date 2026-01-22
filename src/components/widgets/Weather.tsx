@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import WeatherService from "../../services/weather.service";
+import WeatherService from "../../lib/weather";
 import TitleBox from "../utility/TitleBox";
 import type { WeatherResponse } from "../../types/televideo";
 

@@ -1,19 +1,14 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import TitleBox from "../../components/utility/TitleBox";
-import TvGuideService from "../../services/tvguide.service";
+import TvGuideService from "../../lib/tvGuide";
 import Content from "../../components/layout/Content";
 import Loader from "../../components/utility/Loader";
+import { useNavigation } from "../../hooks/useNavigation";
 
 export default function GuidaTvPage({ page = 300 }) {
   const [programsData, setProgramsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(10); // Inizializza con un valore conservativo
-  const containerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
-  const measurementRef = useRef<HTMLUListElement>(null);
-  const isInitializedRef = useRef(false);
-  const currentVisibleCountRef = useRef(10);
+  const { navigateToPage } = useNavigation();
 
   // Check if we're on a program detail page (301-399)
   const isProgramDetailPage = page > 300 && page < 400;
@@ -35,99 +30,6 @@ export default function GuidaTvPage({ page = 300 }) {
 
     fetchPrograms();
   }, []);
-
-  // Calcola quanti elementi possono essere mostrati
-  useEffect(() => {
-    if (loading || programsData.length === 0) return;
-
-    const checkVisibility = () => {
-      if (!containerRef.current || !titleRef.current || !measurementRef.current) {
-        return;
-      }
-
-      const containerHeight = containerRef.current.offsetHeight;
-      const titleHeight = titleRef.current.offsetHeight;
-      const availableHeight = containerHeight - titleHeight;
-
-      // Usa doppio requestAnimationFrame per assicurarsi che il DOM sia completamente renderizzato
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (!measurementRef.current) return;
-
-          const measurementList = measurementRef.current;
-          const items = Array.from(measurementList.children) as HTMLElement[];
-          
-          if (items.length === 0) {
-            setTimeout(checkVisibility, 50);
-            return;
-          }
-
-          // Misura l'altezza di ogni elemento
-          const itemHeights: number[] = [];
-          items.forEach((item) => {
-            const height = item.offsetHeight;
-            if (height > 0) {
-              itemHeights.push(height);
-            }
-          });
-
-          if (itemHeights.length === 0) {
-            setTimeout(checkVisibility, 50);
-            return;
-          }
-
-          // Calcola quanti elementi possono entrare nello spazio disponibile
-          let accumulatedHeight = 0;
-          let visibleCount = 0;
-
-          for (let i = 0; i < itemHeights.length; i++) {
-            if (accumulatedHeight + itemHeights[i] <= availableHeight) {
-              accumulatedHeight += itemHeights[i];
-              visibleCount++;
-            } else {
-              break;
-            }
-          }
-
-          // Aggiorna solo se è cambiato qualcosa o se è la prima inizializzazione
-          if (!isInitializedRef.current || visibleCount !== currentVisibleCountRef.current) {
-            currentVisibleCountRef.current = visibleCount;
-            setVisibleCount(visibleCount);
-            isInitializedRef.current = true;
-          }
-        });
-      });
-    };
-
-    // Initial check with a small delay
-    const timeoutId = setTimeout(() => {
-      checkVisibility();
-    }, 100);
-
-    // Use ResizeObserver to watch for size changes
-    const resizeObserver = new ResizeObserver(() => {
-      checkVisibility();
-    });
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-    if (titleRef.current) {
-      resizeObserver.observe(titleRef.current);
-    }
-    if (measurementRef.current) {
-      resizeObserver.observe(measurementRef.current);
-    }
-
-    // Also listen to window resize
-    window.addEventListener("resize", checkVisibility);
-
-    return () => {
-      clearTimeout(timeoutId);
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", checkVisibility);
-    };
-  }, [loading, programsData]);
 
   if (isProgramDetailPage) {
     if (loading) {
@@ -170,98 +72,53 @@ export default function GuidaTvPage({ page = 300 }) {
 
   // Show programs list for page 300
   return (
-    <div ref={containerRef} className="flex flex-col h-full overflow-hidden">
-      <div ref={titleRef} className="flex-shrink-0">
+    <div className="flex flex-col h-full">
+      <div className="flex-shrink-0">
         <TitleBox color="green" title="300 guida tv" size="lg" />
       </div>
       {loading ? (
         <p className="mt-4" style={{ color: "var(--yellow)" }}>Ricerca segnale...</p>
       ) : (
-        <div className="flex-1 overflow-hidden relative">
-          {/* Contenitore nascosto per misurare le altezze - sempre presente ma invisibile */}
-          <ul 
-            ref={measurementRef}
-            className="absolute pointer-events-none"
-            style={{ 
-              visibility: 'hidden',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: -1
-            }}
-          >
+        <div className="flex-1">
+          <ul className="mt-4">
             {programsData.length > 0 &&
-              programsData.map((program: any, index: number) => (
-                <li 
-                  key={`measure-${index}`}
-                  className="p-2"
-                  style={{ 
-                    backgroundColor: index % 2 === 0 ? "transparent" : "rgba(128, 128, 128, 0.2)"
-                  }}
-                >
-                  <div className="flex gap-3">
-                    <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
-                      {index + 1 < 10 ? "30" : "3"}
-                      {index + 1}
-                    </span>
-                    <div className="flex flex-col flex-1">
-                      <div className="flex">
-                        {(program.time || program.onair) && (
-                          <p className="w-[3rem]" style={{ color: "var(--cyan)" }}>
-                            {(program.time || program.onair || "").split(' ')[1] || (program.time || program.onair || "")}
-                          </p>
-                        )}
-                        {program.channel && (
-                          <p className="truncate" style={{ color: "var(--cyan)" }}>
-                            {program.channel}
-                          </p>
-                        )}
+              programsData.map((program: any, index: number) => {
+                const detailPage = 301 + index;
+                return (
+                  <li 
+                    key={index}
+                    onClick={() => navigateToPage(detailPage)}
+                    className="p-2 cursor-pointer hover:opacity-80 transition-opacity"
+                    style={{ 
+                      backgroundColor: index % 2 === 0 ? "transparent" : "rgba(128, 128, 128, 0.2)"
+                    }}
+                  >
+                    <div className="flex gap-3">
+                      <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
+                        {index + 1 < 10 ? "30" : "3"}
+                        {index + 1}
+                      </span>
+                      <div className="flex flex-col flex-1">
+                        <div className="flex">
+                          {(program.time || program.onair) && (
+                            <p className="w-[4rem]" style={{ color: "var(--cyan)" }}>
+                              {(program.time || program.onair || "").split(' ')[1] || (program.time || program.onair || "")}
+                            </p>
+                          )}
+                          {program.channel && (
+                            <p className="truncate" style={{ color: "var(--cyan)" }}>
+                              | {program.channel}
+                            </p>
+                          )}
+                        </div>
+                        <p className="uppercase">
+                          {program.title}
+                        </p>
                       </div>
-                      <p className="uppercase">
-                        {program.title}
-                      </p>
                     </div>
-                  </div>
-                </li>
-              ))}
-          </ul>
-          {/* Lista visibile */}
-          <ul ref={listRef} className="mt-4">
-            {programsData.length > 0 &&
-              programsData.slice(0, visibleCount).map((program: any, index: number) => (
-                <li 
-                  key={index}
-                  className="p-2"
-                  style={{ 
-                    backgroundColor: index % 2 === 0 ? "transparent" : "rgba(128, 128, 128, 0.2)"
-                  }}
-                >
-                  <div className="flex gap-3">
-                    <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
-                      {index + 1 < 10 ? "30" : "3"}
-                      {index + 1}
-                    </span>
-                    <div className="flex flex-col flex-1">
-                      <div className="flex">
-                        {(program.time || program.onair) && (
-                          <p className="w-[3rem]" style={{ color: "var(--cyan)" }}>
-                            {(program.time || program.onair || "").split(' ')[1] || (program.time || program.onair || "")}
-                          </p>
-                        )}
-                        {program.channel && (
-                          <p className="truncate" style={{ color: "var(--cyan)" }}>
-                            | {program.channel}
-                          </p>
-                        )}
-                      </div>
-                      <p className="uppercase">
-                        {program.title}
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
           </ul>
           {!loading && programsData.length > 0 && (
             <p className="mt-6 uppercase opacity-50" >

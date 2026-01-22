@@ -58,4 +58,3 @@ export default class CacheService {
         CacheService.cache.clear();
     }
 }
-

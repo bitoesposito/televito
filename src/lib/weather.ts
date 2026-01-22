@@ -1,5 +1,5 @@
 import type { WeatherResponse } from "../types/televideo";
-import CacheService from "./cache.service";
+import CacheService from "./utils/cache";
 
 export default class WeatherService {
     private static readonly API_URL = "https://api.open-meteo.com/v1/forecast";

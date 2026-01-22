@@ -1,33 +1,17 @@
-import { useEffect, useState } from "react";
 import TitleBox from "../../components/utility/TitleBox";
-import EconomicsService from "../../services/economics.service";
+import { useEconomicsNews } from "../../lib/economics";
 import Content from "../../components/layout/Content";
 import Loader from "../../components/utility/Loader";
+import { useNavigation } from "../../hooks/useNavigation";
 
 export default function EconomiaPage({ page = 400 }) {
-  const [newsData, setNewsData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { news: newsData, loading } = useEconomicsNews();
+  const { navigateToPage } = useNavigation();
 
   // Check if we're on a news detail page (401-499)
   const isNewsDetailPage = page > 400 && page < 500;
   const newsIndex = isNewsDetailPage ? page - 401 : null;
   const selectedNews = newsIndex !== null && newsData[newsIndex] ? newsData[newsIndex] : null;
-
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        setLoading(true);
-        const data = await EconomicsService.getEconomicsNews();
-        setNewsData(data);
-      } catch (err) {
-        console.error("Failed to load economics news:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNews();
-  }, []);
 
   if (isNewsDetailPage) {
     if (loading) {
@@ -69,19 +53,26 @@ export default function EconomiaPage({ page = 400 }) {
         <>
           <ul className="mt-4 space-y-2">
             {newsData.length > 0 &&
-              newsData.map((item: any, index: number) => (
-                <li key={index}>
-                  <div className="flex gap-3">
-                    <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
-                      {index + 1 < 10 ? "40" : "4"}
-                      {index + 1}
-                    </span>
-                    <p className="uppercase">
-                      {item.title}
-                    </p>
-                  </div>
-                </li>
-              ))}
+              newsData.map((item: any, index: number) => {
+                const detailPage = 401 + index;
+                return (
+                  <li 
+                    key={index}
+                    onClick={() => navigateToPage(detailPage)}
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                  >
+                    <div className="flex gap-3">
+                      <span className="w-[3rem]" style={{ color: "var(--yellow)" }}>
+                        {index + 1 < 10 ? "40" : "4"}
+                        {index + 1}
+                      </span>
+                      <p className="uppercase">
+                        {item.title}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
           </ul>
           {!loading && newsData.length > 0 && (
             <p className="mt-6 uppercase opacity-50" >

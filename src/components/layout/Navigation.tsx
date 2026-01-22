@@ -1,21 +1,17 @@
 import TitleBox from "../utility/TitleBox";
 import { useNavigation } from "../../hooks/useNavigation";
-import { forwardRef } from "react";
 
 export interface NavigationProps {
   onNavigate?: (page: number) => void;
 }
 
-const Navigation = forwardRef<HTMLElement, NavigationProps>(
-  ({ onNavigate }, ref) => {
-    const { navigationItems } = useNavigation();
+function Navigation({ onNavigate }: NavigationProps) {
+	const { navigationItems } = useNavigation();
 
     return (
       <>
         <nav
-          ref={ref}
-          className="flex md:hidden w-full p-3 px-4 gap-3 flex-wrap max-w-screen-lg mx-auto"
-          style={{ backgroundColor: 'var(--black)' }}
+          className="flex md:hidden w-full p-3 px-4 gap-3 flex-wrap max-w-screen-lg mx-auto bg-black"
         >
           {navigationItems.filter((item) => item.targetPage !== undefined).map((item) => (
             <TitleBox
@@ -30,9 +26,7 @@ const Navigation = forwardRef<HTMLElement, NavigationProps>(
         </nav>
 
         <nav
-          ref={ref}
-          className=" hidden md:flex w-full p-3 px-4 gap-3 flex-wrap max-w-screen-lg mx-auto"
-          style={{ backgroundColor: 'var(--black)' }}
+          className="hidden md:flex w-full p-3 px-4 gap-3 flex-wrap max-w-screen-lg mx-auto bg-black"
         >
           {navigationItems.filter((item) => item.targetPage !== undefined).map((item) => (
             <TitleBox
@@ -48,9 +42,6 @@ const Navigation = forwardRef<HTMLElement, NavigationProps>(
         </nav>
       </>
     );
-  }
-);
-
-Navigation.displayName = "Navigation";
+}
 
 export default Navigation;

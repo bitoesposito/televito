@@ -14,10 +14,6 @@ export default function Loader({ time, blocks, targetPage = 100 }: { time: numbe
         const next = prev + increment;
         if (next >= 100) {
           clearInterval(progressInterval);
-          // Dispatch custom event to trigger navigation to target page
-          window.dispatchEvent(
-            new CustomEvent("navigateToPage", { detail: targetPage })
-          );
           return 100;
         }
         return next;
@@ -25,7 +21,20 @@ export default function Loader({ time, blocks, targetPage = 100 }: { time: numbe
     }, interval);
 
     return () => clearInterval(progressInterval);
-  }, [targetPage]);
+  }, [time]);
+
+  // Separate effect to handle navigation when progress reaches 100
+  useEffect(() => {
+    if (progress >= 100) {
+      // Use setTimeout to defer the navigation after the current render cycle
+      const timeoutId = setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent("navigateToPage", { detail: targetPage })
+        );
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [progress, targetPage]);
 
   const totalBlocks = blocks;
   const filledBlocks = Math.floor((progress / 100) * totalBlocks);

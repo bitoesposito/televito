@@ -1,18 +1,10 @@
-import { useEffect, useState } from "react";
 import TitleBox from "../utility/TitleBox";
-import NewsService from "../../services/news.service";
+import { useNews } from "../../lib/news";
+import { useNavigation } from "../../hooks/useNavigation";
 
 export default function LastNewsWidget() {
-  const [newsData, setNewsData] = useState([]);
-
-  useEffect(() => {
-    NewsService.getNews(3)
-      .then((data) => setNewsData(data))
-      .catch((err) => {
-        console.error("Failed to load news:", err);
-      });
-  }, []);
-
+  const { news: newsData } = useNews(3);
+  const { navigateToPage } = useNavigation();
   return (
     <div className="p-2 border-1 border-gray-500 h-min">
       <TitleBox color="yellow" title="ultim'ora (notizie)" size="md" className="mb-2" />
@@ -35,11 +27,12 @@ export default function LastNewsWidget() {
         )}
       </ul>
       <TitleBox
+        onClick={() => navigateToPage(200)}
         color="white"
         title="vedi tutte (P. 200) >>"
         size="md"
         centerText={true}
-        className="mt-2"
+        className="mt-2 cursor-pointer"
       />
     </div>
   );

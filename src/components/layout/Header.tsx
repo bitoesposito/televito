@@ -1,8 +1,7 @@
-import { useRef, useEffect, useState, forwardRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import type { HeaderProps } from "../../types/televideo";
 
-const Header = forwardRef<HTMLElement, HeaderProps>(
-  function Header({ pageNumber, inputBuffer = "", onInputChange, onConfirm, className }, ref) {
+function Header({ pageNumber, inputBuffer = "", onInputChange, onConfirm, className }: HeaderProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [time, setTime] = useState(new Date());
 
@@ -42,7 +41,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
     const [isFocused, setIsFocused] = useState(false);
 
     return (
-      <header ref={ref} className={`w-full flex justify-between items-baseline gap-3 p-4 ${className}`}>
+      <header className={`w-full flex justify-between items-baseline gap-3 p-4 ${className}`}>
         <div className="relative flex items-baseline gap-1" style={{ fontFamily: 'var(--jersey-font)', fontWeight: 'var(--jersey-weight)', fontSize: 'var(--jersey-size)' }}>
           <span className="whitespace-nowrap">P.</span>
           <div 
@@ -110,9 +109,6 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
               aria-label="Inserisci numero pagina"
             />
           </div>
-          <span className="text-white opacity-50 sm:hidden truncate pl-2">
-             Nagiva qui
-          </span>
         </div>
 
         <div className="flex items-baseline gap-2" style={{ color: 'var(--green)' }}>
@@ -121,9 +117,6 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
         </div>
       </header>
     );
-  }
-);
-
-Header.displayName = "Header";
+}
 
 export default Header;

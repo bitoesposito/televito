@@ -1,4 +1,4 @@
-import CacheService from "./cache.service";
+import CacheService from "./utils/cache";
 
 export default class TvGuideService {
     private static readonly API_URL = "https://services.tivulaguida.it/api/epg/highlights.json";
@@ -78,4 +78,3 @@ export default class TvGuideService {
         }
     }
 }
-

@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
 import TitleBox from "../utility/TitleBox";
-import CultureService from "../../services/culture.service";
+import { useCultureNews } from "../../lib/culture";
+import { useNavigation } from "../../hooks/useNavigation";
 
 export default function CultureNewsWidget() {
-  const [newsData, setNewsData] = useState([]);
-
-  useEffect(() => {
-    CultureService.getCultureNews(3)
-      .then((data) => setNewsData(data))
-      .catch((err) => {
-        console.error("Failed to load culture news:", err);
-      });
-  }, []);
+  const { news: newsData } = useCultureNews(3);
+  const { navigateToPage } = useNavigation();
 
   return (
     <div className="p-2 border-1 border-gray-500 h-min">
@@ -35,11 +28,12 @@ export default function CultureNewsWidget() {
         )}
       </ul>
       <TitleBox
+        onClick={() => navigateToPage(500)}
         color="white"
         title="vedi tutte (P. 500) >>"
         size="md"
         centerText={true}
-        className="mt-2"
+        className="mt-2 cursor-pointer"
       />
     </div>
   );

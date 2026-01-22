@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
 import TitleBox from "../utility/TitleBox";
-import EconomicsService from "../../services/economics.service";
+import { useEconomicsNews } from "../../lib/economics";
+import { useNavigation } from "../../hooks/useNavigation";
 
 export default function EconomicsNewsWidget() {
-  const [newsData, setNewsData] = useState([]);
-
-  useEffect(() => {
-    EconomicsService.getEconomicsNews(3)
-      .then((data) => setNewsData(data))
-      .catch((err) => {
-        console.error("Failed to load economics news:", err);
-      });
-  }, []);
+  const { news: newsData } = useEconomicsNews(3);
+  const { navigateToPage } = useNavigation();
 
   return (
     <div className="p-2 border-1 border-gray-500 h-min">
@@ -35,11 +28,12 @@ export default function EconomicsNewsWidget() {
         )}
       </ul>
       <TitleBox
+        onClick={() => navigateToPage(400)}
         color="white"
         title="vedi tutte (P. 400) >>"
         size="md"
         centerText={true}
-        className="mt-2"
+        className="mt-2 cursor-pointer"
       />
     </div>
   );

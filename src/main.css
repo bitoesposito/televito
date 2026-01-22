@@ -10,13 +10,6 @@
 
 
 :root {
-  /* font-settings */
-  /* --jersey-font: 'Jersey 10', sans-serif;
-  --jersey-size: 1.75rem;
-  --jersey-weight: 500;
-  --vt323-font: 'VT323', monospace;
-  --vt323-size: 1.5rem;
-  --vt323-weight: 400; */
   --public-pixel-font: 'PublicPixel', sans-serif;
   --public-pixel-size: .75rem;
   --public-pixel-weight: 500;
@@ -34,7 +27,6 @@
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--public-pixel-font);
   font-weight: var(--public-pixel-weight);
-  /* font-size: var(--public-pixel-size); */
   line-height: 1.25rem;
 }
 
@@ -42,13 +34,11 @@ body {
   font-family: var(--public-pixel-font);
   font-weight: var(--public-pixel-weight);
   font-size: var(--public-pixel-size);
-  /* line-height: 1; */
   background-color: var(--black);
   color: var(--white);
   user-select: none;
   position: relative;
   animation: flicker 3s infinite;
-  /* overflow: hidden; */
 }
 
 @keyframes flicker {
@@ -86,16 +76,6 @@ nav {
   z-index: 9999;
 }
 
-/* Nascondi scrollbar ma mantieni scroll */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
-}
-
 /* Blinker animation for page number cursor */
 @keyframes blink {
   0%, 50% {
@@ -108,8 +88,8 @@ nav {
 
 .page-cursor {
   display: inline-block;
-  width: 0.25em;
-  height: .6em;
+  width: 0.5em;
+  height: 1em;
   background-color: currentColor;
   animation: blink 1s infinite;
   margin-left: 0.05em;
