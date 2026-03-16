@@ -10,12 +10,12 @@ export default defineConfig({
 	server: {
 		host: true,
 		port: 4173,
-		allowedHosts: ['*.vitoesposito.it', 'tv.vitoesposito.it'],
+		allowedHosts: true,
 	},
 	preview: {
 		host: true,
 		port: 4173,
-		allowedHosts: ['*.vitoesposito.it', 'tv.vitoesposito.it'],
+		allowedHosts: true,
 	},
 	build: {
 		minify: 'esbuild',
