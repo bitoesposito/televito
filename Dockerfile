@@ -17,6 +17,6 @@ RUN npm ci
 
 COPY --from=builder /app/dist ./dist
 
-EXPOSE 3000
+EXPOSE 4173
 
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]
