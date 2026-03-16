@@ -11,12 +11,12 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
-    allowedHosts: ['vitoesposito.it']
+    allowedHosts: ['tv.vitoesposito.it']
   },
   preview: {
     host: true,
     port: 3000,
-    allowedHosts: ['vitoesposito.it']
+    allowedHosts: ['tv.vitoesposito.it']
   },
   build: {
     // Enable minification for production builds (esbuild is faster than terser)
