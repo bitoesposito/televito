@@ -1,0 +1,6 @@
+# Nixpacks already uses Caddy for Vite+React SPAs (serves /app/dist).
+# Coolify must NOT override this with "npm run preview" — leave Start Command empty,
+# or set PORT (Caddy listens on :$PORT, default 3000).
+
+[start]
+cmd = 'exec caddy run --config /assets/Caddyfile --adapter caddyfile 2>&1'
